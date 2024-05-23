@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .blueprints import bot_identity
+from .blueprints import bot_identity, urls
 
 
 def create_app(test_config=None):
@@ -18,5 +18,6 @@ def create_app(test_config=None):
 
     db.init_app(app)
     app.register_blueprint(bot_identity.identity_bp)
+    app.register_blueprint(urls.url_bp)
 
     return app
