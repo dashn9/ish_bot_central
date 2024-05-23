@@ -12,7 +12,7 @@ class BotIdentityModel(BotBaseModel, MongoBaseModel):
         super().__init__(db_client)
 
     def fetch_identity_by_id(self, id: int) -> dict:
-        return self.find(id=id)
+        return self.find(ID=id)
 
     def get_collection(self) -> str:
         return "identities"
