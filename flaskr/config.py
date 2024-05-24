@@ -2,3 +2,27 @@ MONGO_HOST = "localhost"
 MONGO_PORT = 27017
 MONGO_USERNAME = "localhost"
 MONGO_PASSWORD = "localhost"
+
+# Webpages
+PAGE_DEPTH_RANGE = (0.14, 0.17)
+
+# ADS
+AD_PROVIDER = "monetag"
+AD_CLICK_PROBABILITY_RANGE = (0.32, 0.40)
+AD_KEYWORDS = [
+    "win",
+    "gamble",
+    "casino",
+    "money",
+    "bet",
+    "$",
+    "cash",
+    "virus",
+    "hack",
+    "stock",
+    "forex",
+    "crypto",
+]
+AD_KEYWORDS_SMARTPHONE = []
+AD_KEYWORDS_CLICK_PROBABILITY_RANGE = (0.74, 0.87)
+AD_TYPES = {"vignette": 0.8, "in_page": 0.2}

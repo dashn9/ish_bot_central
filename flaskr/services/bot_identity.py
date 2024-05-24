@@ -14,4 +14,5 @@ class IdentityService:
             identity = self.__bot_identity_model.fetch_identity_by_id(value)
 
         identity.pop("_id")
+        identity.pop("FULL_TIMEZONE_INFO")
         return identity

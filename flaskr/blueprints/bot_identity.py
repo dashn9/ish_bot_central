@@ -1,9 +1,9 @@
 import json
-import random
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flaskr.db import get_db
 
 from flaskr.services.bot_identity import IdentityService
+from flaskr.services.ads import AdService
 
 identity_bp = Blueprint("identity", __name__, url_prefix="/api/bots/identity")
 
@@ -24,6 +24,8 @@ def get_identity(method, value):
     """Handles GET requests to the root route, retrieving and processing identity data."""
 
     identity_service = IdentityService(db_client=get_db())
+    ad_service = AdService()
 
     identity = identity_service.get_identity(method, json.loads(value))
+    ad_service.insert_monetag_ads_attribs_to_identity(identity)
     return jsonify(identity)
