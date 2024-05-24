@@ -1,18 +1,61 @@
+import json
+import requests
 from pymongo import MongoClient
 from flaskr.models.identity import BotIdentityModel
 
 
 class IdentityService:
-    __bot_identity_model = None
+    __db_client = None
 
     def __init__(self, db_client: MongoClient) -> None:
-        self.__bot_identity_model = BotIdentityModel(db_client)
+        self.__db_client = db_client
 
     def get_identity(self, method: str, value: dict | str | int) -> dict:
         identity = {}
         if method == "id":
-            identity = self.__bot_identity_model.fetch_identity_by_id(value)
+            identity = BotIdentityModel(self.__db_client).fetch_identity_by_id(value)
 
         identity.pop("_id")
         identity.pop("FULL_TIMEZONE_INFO")
         return identity
+
+    @staticmethod
+    def timezone_ip_timezone_api_url_resolver(timezone_id):
+        url = f"http://worldtimeapi.org/api/timezone/{timezone_id}"
+        return url
+
+    def update_timezone(self, identity_id, timezone: dict) -> bool:
+        identity = BotIdentityModel(self.__db_client)
+        identity.fetch_identity_by_id(identity_id)
+        identity.update_timezone_details(timezone)
+        return True
+
+    def get_timezone(self, ip_addr: str, identity_id: int = None) -> dict:
+        with open("./flaskr/files/timezones_abbr_map.json") as f:
+            timezone_fulls = json.load(f)
+        fetched_timezone = {
+            "id": None,
+            "full_name": None,
+            "offset": None,
+            "full_info": {},
+        }
+        ipapi_response = requests.get(
+            f"http://ip-api.com/json/{ip_addr}?fields=53137215"
+        ).json()
+
+        worldtimeapi_response = requests.get(
+            self.timezone_ip_timezone_api_url_resolver(ipapi_response["timezone"])
+        ).json()
+
+        fetched_timezone["full_name"] = timezone_fulls.get(
+            worldtimeapi_response["abbreviation"], None
+        )
+
+        fetched_timezone["id"] = ipapi_response["timezone"]
+        fetched_timezone["offset"] = round(ipapi_response["offset"] / 60)
+        fetched_timezone["full_info"] = ipapi_response
+
+        if identity_id:
+            self.update_timezone(identity_id, fetched_timezone)
+
+        return fetched_timezone

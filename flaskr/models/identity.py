@@ -14,5 +14,8 @@ class BotIdentityModel(BotBaseModel, MongoBaseModel):
     def fetch_identity_by_id(self, id: int) -> dict:
         return self.find(ID=id)
 
+    def update_timezone_details(self, timezone: dict):
+        return self.update(TIMEZONE=timezone)
+
     def get_collection(self) -> str:
         return "identities"

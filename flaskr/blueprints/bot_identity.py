@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flaskr.db import get_db
 
 from flaskr.services.bot_identity import IdentityService
@@ -21,7 +21,6 @@ def update_visit_count(identity_id):
 
 @identity_bp.route("/<string:method>/<string:value>", methods=["GET"])
 def get_identity(method, value):
-    """Handles GET requests to the root route, retrieving and processing identity data."""
 
     identity_service = IdentityService(db_client=get_db())
     ad_service = AdService()
@@ -29,3 +28,11 @@ def get_identity(method, value):
     identity = identity_service.get_identity(method, json.loads(value))
     ad_service.insert_monetag_ads_attribs_to_identity(identity)
     return jsonify(identity)
+
+
+@identity_bp.route("/<int:identity_id>/timezone/fetch", methods=["GET"])
+def fetch_timezone(identity_id: int):
+
+    identity_service = IdentityService(db_client=get_db())
+    timezone = identity_service.get_timezone(request.remote_addr, identity_id)
+    return jsonify(timezone)
