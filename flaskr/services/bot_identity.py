@@ -16,7 +16,7 @@ class IdentityService:
             identity = BotIdentityModel(self.__db_client).fetch_identity_by_id(value)
 
         identity.pop("_id")
-        identity.pop("FULL_TIMEZONE_INFO")
+        identity["TIMEZONE"].pop("full_info")
         return identity
 
     @staticmethod
