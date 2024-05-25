@@ -1,6 +1,7 @@
 import json
 import requests
 from pymongo import MongoClient
+from flask import current_app
 from flaskr.models.identity import BotIdentityModel
 
 
@@ -10,6 +11,9 @@ class IdentityService:
     def __init__(self, db_client: MongoClient) -> None:
         self.__db_client = db_client
 
+    def resolve_smartproxy_url(self, proxy_geo, session_duration='5'):
+        return f"user-{current_app.config["SMARTPROXY_USER"]}-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:{current_app.config["SMARTPROXY_PASSWORD"]}@{current_app.config["SMARTPROXY_HOST"]}:{current_app.config["SMARTPROXY_PORT"]}"
+    
     def get_identity(self, method: str, value: dict | str | int) -> dict:
         identity = {}
         if method == "id":
@@ -17,6 +21,8 @@ class IdentityService:
 
         identity.pop("_id")
         identity["TIMEZONE"].pop("full_info")
+        identity["PROXY_URL"] = self.resolve_smartproxy_url(identity["PROXY_GEO"])
+
         return identity
 
     @staticmethod
