@@ -20,7 +20,10 @@ class IdentityService:
             identity = BotIdentityModel(self.__db_client).fetch_identity_by_id(value)
 
         identity.pop("_id")
-        identity["TIMEZONE"].pop("full_info")
+        try:
+            identity["TIMEZONE"].pop("full_info")
+        except KeyError:
+            pass
         identity["PROXY_URL"] = self.resolve_smartproxy_url(identity["PROXY_GEO"])
 
         return identity

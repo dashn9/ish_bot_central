@@ -8,7 +8,7 @@ class UrlService:
     active_url_to_use = {
         "page_url": "",
         "page_content_element_type": "id",
-        "page_content_element_name": "main",
+        "page_content_element_name": "ouuzc",
         "related_articles_elements_type": "class",
         "related_articles_elements_name": "nav-links",
         "page_clicks": random.randint(3, 5),
