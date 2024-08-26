@@ -39,6 +39,12 @@ class IdentityService:
         identity.update_timezone_details(timezone)
         return True
 
+    def update_cookies(self, identity_id, cookies: list) -> bool:
+        identity = BotIdentityModel(self.__db_client)
+        identity.fetch_identity_by_id(identity_id)
+        identity.update_cookies(cookies)
+        return True
+    
     def get_timezone(self, ip_addr: str, identity_id: int = None) -> dict:
         with open("./flaskr/files/timezones_abbr_map.json") as f:
             timezone_fulls = json.load(f)

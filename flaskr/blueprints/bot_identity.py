@@ -19,7 +19,7 @@ def update_visit_count(identity_id):
     collection.update_one({"_id": identity_id}, {"$inc": {"HAS_VISITED_TODAY": 1}})
 
 
-@identity_bp.route("/<string:method>/<string:value>", methods=["GET"])
+@identity_bp.route("/<string:method>/<string:value>/", methods=["GET"])
 def get_identity(method, value):
 
     identity_service = IdentityService(db_client=get_db())
@@ -30,9 +30,17 @@ def get_identity(method, value):
     return jsonify(identity)
 
 
-@identity_bp.route("/<int:identity_id>/timezone/fetch", methods=["GET"])
+@identity_bp.route("/<int:identity_id>/timezone/", methods=["GET"])
 def fetch_timezone(identity_id: int):
 
     identity_service = IdentityService(db_client=get_db())
     timezone = identity_service.get_timezone(request.remote_addr, identity_id)
     return jsonify(timezone)
+
+
+@identity_bp.route("/<int:identity_id>/cookies/", methods=["PUT"])
+def update_cookies(identity_id: int):
+    cookies = request.json
+    identity_service = IdentityService(db_client=get_db())
+    cookies = identity_service.update_cookies(identity_id, cookies)
+    return jsonify(cookies)

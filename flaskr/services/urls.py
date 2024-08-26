@@ -7,17 +7,12 @@ class UrlService:
     old_urls = []
     active_url_to_use = {
         "page_url": "",
-        "page_content_element_type": "id",
-        "page_content_element_name": "ouuzc",
-        "related_articles_elements_type": "class",
-        "related_articles_elements_name": "nav-links",
+        "page_content_element": "#ouuzc",
+        "related_articles_elements": ".nav-links",
         "page_clicks": random.randint(3, 5),
-        "vignette_close_ad_elements_type": "xpath",
-        "vignette_close_ad_elements_name": "//iframe//span[text() = 'Close']",
-        "vignette_open_ad_elements_type": "xpath",
-        "vignette_open_ad_elements_name": "//iframe//span[count(ancestor::div) = 5]",
-        "in_page_ad_link_elements_type": "xpath",
-        "in_page_ad_link_elements_name": '//iframe//div[@style="display: flex !important;"]',
+        "vignette_close_ad_elements": "//iframe//span[text() = 'Close']",
+        "vignette_open_ad_elements": "//iframe//span[count(ancestor::div) = 5]",
+        "in_page_open_ad_link_elements": '//iframe//div[@style="display: flex !important;"]',
         "maximum_no_of_ads": 2,
         "proxy_domain_whitelists": [
             "whouseem.com",

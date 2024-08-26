@@ -17,5 +17,8 @@ class BotIdentityModel(BotBaseModel, MongoBaseModel):
     def update_timezone_details(self, timezone: dict):
         return self.update(TIMEZONE=timezone)
 
+    def update_cookies(self, cookies: list):
+        return self.update(COOKIES=cookies)
+
     def get_collection(self) -> str:
         return "identities"
