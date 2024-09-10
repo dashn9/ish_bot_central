@@ -19,13 +19,21 @@ def update_visit_count(identity_id):
     collection.update_one({"_id": identity_id}, {"$inc": {"HAS_VISITED_TODAY": 1}})
 
 
+@identity_bp.route("/<string:method>/", defaults={"value": None}, methods=["GET"])
 @identity_bp.route("/<string:method>/<string:value>/", methods=["GET"])
 def get_identity(method, value):
 
     identity_service = IdentityService(db_client=get_db())
     ad_service = AdService()
 
-    identity = identity_service.get_identity(method, json.loads(value))
+    if method == "random":
+        identity = identity_service.get_identity(method)
+    else:
+        if value is None:
+            return jsonify({"error": "Value is required for this method"}), 400
+
+        identity = identity_service.get_identity(method, json.loads(value))
+
     ad_service.insert_monetag_ads_attribs_to_identity(identity)
     return jsonify(identity)
 

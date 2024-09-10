@@ -14,10 +14,12 @@ class IdentityService:
     def resolve_smartproxy_url(self, proxy_geo, session_duration='5'):
         return f"user-{current_app.config["SMARTPROXY_USER"]}-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:{current_app.config["SMARTPROXY_PASSWORD"]}@{current_app.config["SMARTPROXY_HOST"]}:{current_app.config["SMARTPROXY_PORT"]}"
     
-    def get_identity(self, method: str, value: dict | str | int) -> dict:
+    def get_identity(self, method: str, value: dict | str | int = None) -> dict:
         identity = {}
         if method == "id":
             identity = BotIdentityModel(self.__db_client).fetch_identity_by_id(value)
+        elif method == "random":
+            identity = BotIdentityModel(self.__db_client).fetch_random_identity()
 
         identity.pop("_id")
         try:

@@ -14,6 +14,11 @@ class BotIdentityModel(BotBaseModel, MongoBaseModel):
     def fetch_identity_by_id(self, id: int) -> dict:
         return self.find(ID=id)
 
+    def fetch_random_identity(self) -> dict:
+        pipeline = [{"$sample": {"size": 1}}]
+        result = self.aggregate(pipeline)
+        return result[0] if result else None
+
     def update_timezone_details(self, timezone: dict):
         return self.update(TIMEZONE=timezone)
 

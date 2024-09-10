@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pymongo import MongoClient
+from typing import List, Dict, Any
 
 
 class MongoBaseModel(ABC):
@@ -14,7 +15,6 @@ class MongoBaseModel(ABC):
             self.get_collection()
         ].find_one(kwargs)
         self.models = [item]
-
         return item
 
     def update(self, **kwargs) -> bool:
@@ -23,6 +23,25 @@ class MongoBaseModel(ABC):
                 {"ID": model["ID"]}, {"$set": kwargs}
             )
         return True
+
+    def increment(self, id: str, field: str, value: int = 1) -> bool:
+        for model in self.models:
+            self.__db_client[self.get_database()][self.get_collection()].update_one(
+                {"ID": model["ID"]}, {"$inc": {field: value}}
+            )
+        return True
+
+    def count(self, **kwargs) -> int:
+        return self.__db_client[self.get_database()][
+            self.get_collection()
+        ].count_documents(kwargs)
+
+    def aggregate(self, pipeline: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        return list(
+            self.__db_client[self.get_database()][self.get_collection()].aggregate(
+                pipeline
+            )
+        )
 
     @abstractmethod
     def get_database(self) -> str:
