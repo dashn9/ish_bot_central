@@ -1,3 +1,4 @@
 __pycache__
 .venv
+.env
 flaskr/files/webpages_to_visit.json

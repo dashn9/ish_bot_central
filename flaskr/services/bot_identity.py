@@ -12,7 +12,7 @@ class IdentityService:
         self.__db_client = db_client
 
     def resolve_smartproxy_url(self, proxy_geo, session_duration='5'):
-        return f"user-{current_app.config["SMARTPROXY_USER"]}-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:{current_app.config["SMARTPROXY_PASSWORD"]}@{current_app.config["SMARTPROXY_HOST"]}:{current_app.config["SMARTPROXY_PORT"]}"
+        return f"user-<smartproxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<smartproxy_password>@{current_app.config["SMARTPROXY_HOST"]}:{current_app.config["SMARTPROXY_PORT"]}"
     
     def get_identity(self, method: str, value: dict | str | int = None) -> dict:
         identity = {}

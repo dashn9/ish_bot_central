@@ -1,34 +1,30 @@
-MONGO_HOST = "localhost"
-MONGO_PORT = 27017
-MONGO_USERNAME = "localhost"
-MONGO_PASSWORD = "localhost"
+from decouple import config, Csv
+import json
+
+# MongoDB
+MONGO_HOST = config("MONGO_HOST")
+MONGO_PORT = config("MONGO_PORT", cast=int)
+MONGO_USERNAME = config("MONGO_USERNAME")
+MONGO_PASSWORD = config("MONGO_PASSWORD")
 
 # Webpages
-PAGE_DEPTH_RANGE = (0.14, 0.17)
+PAGE_DEPTH_RANGE = config("PAGE_DEPTH_RANGE", default="0.14,0.17", cast=Csv(float))
 
 # ADS
-AD_PROVIDER = "monetag"
-AD_CLICK_PROBABILITY_RANGE = (0.32, 0.40)
-AD_KEYWORDS = [
-    "win",
-    "gamble",
-    "casino",
-    "money",
-    "bet",
-    "$",
-    "cash",
-    "virus",
-    "hack",
-    "stock",
-    "forex",
-    "crypto",
-]
-AD_KEYWORDS_SMARTPHONE = []
-AD_KEYWORDS_CLICK_PROBABILITY_RANGE = (0.74, 0.87)
-AD_TYPES = {"vignette": 0.8, "in_page": 0.2}
+AD_PROVIDER = config("AD_PROVIDER")
+AD_CLICK_PROBABILITY_RANGE = config(
+    "AD_CLICK_PROBABILITY_RANGE", default="0.32,0.40", cast=Csv(float)
+)
+AD_KEYWORDS = config("AD_KEYWORDS", cast=Csv())
+AD_KEYWORDS_SMARTPHONE = config("AD_KEYWORDS_SMARTPHONE", cast=Csv(), default=[])
+AD_KEYWORDS_CLICK_PROBABILITY_RANGE = config(
+    "AD_KEYWORDS_CLICK_PROBABILITY_RANGE", cast=Csv(float), default="0.74,0.87"
+)
+AD_TYPES = {
+    "vignette": config("VIGNETTE_AD_TYPE", default=0.8, cast=float),
+    "in_page": config("IN_PAGE_AD_TYPE", default=0.2, cast=float),
+}
 
 # Proxy
-SMARTPROXY_HOST = "gate.smartproxy.com"
-SMARTPROXY_PORT = 7000
-SMARTPROXY_USER = ""
-SMARTPROXY_PASSWORD = ""
+SMARTPROXY_HOST = config("SMARTPROXY_HOST")
+SMARTPROXY_PORT = config("SMARTPROXY_PORT", cast=int)
