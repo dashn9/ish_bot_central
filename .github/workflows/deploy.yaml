@@ -1,0 +1,124 @@
+name: Deploy ish-bot-identities-server with Gunicorn, Nginx, and SSL
+
+on:
+  push:
+    branches:
+      - main  # Trigger the deployment on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12' 
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Upload code to server
+      uses: appleboy/scp-action@v0.1.3
+      with:
+        host: ${{ secrets.SERVER_DOMAIN }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        source: "./"
+        target: "/var/www/ish-bot-identities-server"  # Path on the server where your Flask app will be deployed
+
+    - name: Set up Gunicorn, Nginx, and SSL
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SERVER_DOMAIN }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          sudo apt-get update
+          sudo apt-get install -y nginx certbot python3-certbot-nginx
+
+          sudo systemctl start nginx
+          sudo systemctl enable nginx
+
+          pip install gunicorn
+
+          sudo tee /etc/systemd/system/gunicorn.service > /dev/null <<EOL
+          [Unit]
+          Description=Gunicorn instance to serve ish-bot-identities-server
+          After=network.target
+
+          [Service]
+          User=${{ secrets.SERVER_USER }}
+          Group=www-data
+          WorkingDirectory=/var/www/ish-bot-identities-server
+          Environment="PATH=/var/www/ish-bot-identities-server/venv/bin"
+          ExecStart=/var/www/ish-bot-identities-server/venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities-server/ish_bot.sock wsgi:app
+
+          [Install]
+          WantedBy=multi-user.target
+          EOL
+
+          # Restart Gunicorn service
+          sudo systemctl daemon-reload
+          sudo systemctl start gunicorn
+          sudo systemctl enable gunicorn
+
+          # Configure Nginx with SSL
+          sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOL
+          server {
+              listen 80;
+              server_name ${{ secrets.SERVER_DOMAIN }};
+
+              location / {
+                  include proxy_params;
+                  proxy_pass http://unix:/var/www/ish-bot-identities-server/ish_bot.sock;
+              }
+
+              location /static/ {
+                  alias /var/www/ish-bot-identities-server/static/;
+              }
+          }
+          EOL
+
+          sudo ln -sf /etc/nginx/sites-available/ish-bot-identities-server /etc/nginx/sites-enabled
+          sudo nginx -t
+          sudo systemctl restart nginx
+
+          if ! sudo certbot certificates | grep -q "${{ secrets.SERVER_DOMAIN }}"; then
+              sudo certbot --nginx -d ${{ secrets.SERVER_DOMAIN }} --non-interactive --agree-tos --email ${{ secrets.SSL_EMAIL }}
+          fi
+
+          sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOL
+          server {
+              listen 80;
+              server_name ${{ secrets.SERVER_DOMAIN }};
+              return 301 https://\$server_name\$request_uri;
+          }
+
+          server {
+              listen 443 ssl;
+              server_name ${{ secrets.SERVER_DOMAIN }};
+
+              ssl_certificate /etc/letsencrypt/live/${{ secrets.SERVER_DOMAIN }}/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/${{ secrets.SERVER_DOMAIN }}/privkey.pem;
+              include /etc/letsencrypt/options-ssl-nginx.conf;
+              ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+              location / {
+                  include proxy_params;
+                  proxy_pass http://unix:/var/www/ish-bot-identities-server/ish_bot.sock;
+              }
+
+              location /static/ {
+                  alias /var/www/ish-bot-identities-server/static/;
+              }
+          }
+          EOL
+
+          sudo nginx -t
+          sudo systemctl reload nginx
