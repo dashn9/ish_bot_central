@@ -40,7 +40,8 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          sudo mv ~/ish-bot-identities-server /var/www/
+          if [ -d "~/ish-bot-identities-server" ]; then
+            sudo mv ~/ish-bot-identities-server /var/www/
           sudo apt-get update
           sudo apt-get install -y nginx certbot python3-certbot-nginx
 
@@ -89,7 +90,7 @@ jobs:
           sudo systemctl restart nginx
 
           if ! sudo certbot certificates | grep -q "${{ secrets.SERVER_DOMAIN }}"; then
-              sudo certbot --nginx -d ${{ secrets.SERVER_DOMAIN }} --non-interactive --agree-tos
+              sudo certbot --nginx -d ${{ secrets.SERVER_DOMAIN }} --non-interactive --agree-tos --email dev@ish-bot.com
           fi
 
           sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOL
