@@ -3,7 +3,7 @@ name: Deploy ish-bot-identities-server with Gunicorn, Nginx, and SSL
 on:
   push:
     branches:
-      - main  # Trigger the deployment on push to the main branch
+      - main
 
 jobs:
   deploy:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -30,7 +30,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: "./"
-        target: "/var/www/ish-bot-identities-server"  # Path on the server where your Flask app will be deployed
+        target: "~/var/www/ish-bot-identities-server"
 
     - name: Set up Gunicorn, Nginx, and SSL
       uses: appleboy/ssh-action@v0.1.6
@@ -39,6 +39,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
+          sudo mv ~/ish-bot-identities-server /var/www/
           sudo apt-get update
           sudo apt-get install -y nginx certbot python3-certbot-nginx
 
@@ -63,12 +64,10 @@ jobs:
           WantedBy=multi-user.target
           EOL
 
-          # Restart Gunicorn service
           sudo systemctl daemon-reload
           sudo systemctl start gunicorn
           sudo systemctl enable gunicorn
 
-          # Configure Nginx with SSL
           sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOL
           server {
               listen 80;
