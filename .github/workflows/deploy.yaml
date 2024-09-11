@@ -49,7 +49,7 @@ jobs:
           sudo systemctl enable nginx
 
 
-          sudo tee /etc/systemd/system/gunicorn.service > /dev/null <<EOL
+          sudo tee /etc/systemd/system/gunicorn.service > /dev/null <<EOF
           [Unit]
           Description=Gunicorn instance to serve ish-bot-identities-server
           After=network.target
@@ -63,13 +63,13 @@ jobs:
 
           [Install]
           WantedBy=multi-user.target
-          EOL
+          EOF
 
           sudo systemctl daemon-reload
           sudo systemctl start gunicorn
           sudo systemctl enable gunicorn
 
-          sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOL
+          sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOF
           server {
               listen 80;
               server_name ${{ secrets.SERVER_DOMAIN }};
@@ -83,7 +83,7 @@ jobs:
                   alias /var/www/ish-bot-identities-server/static/;
               }
           }
-          EOL
+          EOF
 
           sudo ln -sf /etc/nginx/sites-available/ish-bot-identities-server /etc/nginx/sites-enabled
           sudo nginx -t
