@@ -89,7 +89,5 @@ jobs:
           sudo nginx -t
           sudo systemctl restart nginx
 
-          EOL
-
           sudo nginx -t
           sudo systemctl reload nginx
