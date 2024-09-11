@@ -40,8 +40,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          if [ -d "~/ish-bot-identities-server" ]; then
-            sudo mv ~/ish-bot-identities-server /var/www/
+          sudo mv ~/ish-bot-identities-server /var/www/
           sudo apt-get update
           sudo apt-get install -y nginx
 
@@ -49,7 +48,7 @@ jobs:
           sudo systemctl enable nginx
 
 
-          sudo tee /etc/systemd/system/gunicorn.service > /dev/null <<EOF
+          sudo tee /etc/systemd/system/gunicorn.service <<EOF
           [Unit]
           Description=Gunicorn instance to serve ish-bot-identities-server
           After=network.target
@@ -69,7 +68,7 @@ jobs:
           sudo systemctl start gunicorn
           sudo systemctl enable gunicorn
 
-          sudo tee /etc/nginx/sites-available/ish-bot-identities-server > /dev/null <<EOF
+          sudo tee /etc/nginx/sites-available/ish-bot-identities-server <<EOF
           server {
               listen 80;
               server_name ${{ secrets.SERVER_DOMAIN }};
