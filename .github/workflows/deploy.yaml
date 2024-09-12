@@ -46,16 +46,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nginx python3-venv
 
-          # Create virtual environment and install dependencies
-          python3 -m venv ~/ish-bot-identities/.venv
-          source ~/ish-bot-identities/.venv/bin/activate
-          pip install --upgrade pip
-          pip install -r ~/ish-bot-identities/requirements.txt
-          pip install gunicorn
-
-
           sudo rm -r /var/www/ish-bot-identities
           sudo mv ~/ish-bot-identities /var/www/
+          
+          python3 -m venv /var/www/ish-bot-identities/.venv
+          source /var/www/ish-bot-identities/.venv/bin/activate
+          pip install --upgrade pip
+          pip install -r /var/www/ish-bot-identities/requirements.txt
+          pip install gunicorn
           
           sudo systemctl start nginx
           sudo systemctl enable nginx
@@ -73,7 +71,7 @@ jobs:
           Group=www-data
           WorkingDirectory=/var/www/ish-bot-identities
           Environment="PATH=/var/www/ish-bot-identities/.venv/bin"
-          ExecStart=/var/www/ish-bot-identities/.venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities/ish_bot.sock wsgi:app
+          ExecStart=/var/www/ish-bot-identities/.venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities/ish_bot.sock --log-level=info flaskr:app
 
           [Install]
           WantedBy=multi-user.target
