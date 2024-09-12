@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Upload code to server
+    - name: Upload code to server (excluding .git folder)
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_DOMAIN }}
@@ -35,7 +35,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nginx python3-venv
 
-          # Move project directory and set up virtual environment
           sudo rm -r /var/www/ish-bot-identities
           sudo mv ~/ish-bot-identities /var/www/
           
@@ -44,7 +43,6 @@ jobs:
           pip install --upgrade pip
           pip install -r /var/www/ish-bot-identities/requirements.txt
           pip install gunicorn
-          sudo tee /var/www/ish-bot-identities/.env <<EOF
           
           sudo systemctl start nginx
           sudo systemctl enable nginx
@@ -63,8 +61,6 @@ jobs:
           WorkingDirectory=/var/www/ish-bot-identities
           Environment="PATH=/var/www/ish-bot-identities/.venv/bin"
           ExecStart=/var/www/ish-bot-identities/.venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities/ish_bot.sock --log-level=info flaskr:app
-
-          EnvironmentFile=/var/www/ish-bot-identities/.env  # Load .env file
 
           [Install]
           WantedBy=multi-user.target
