@@ -11,9 +11,9 @@ class IdentityService:
     def __init__(self, db_client: MongoClient) -> None:
         self.__db_client = db_client
 
-    def resolve_smartproxy_url(self, proxy_geo, session_duration='5'):
-        return f"user-<smartproxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<smartproxy_password>@{current_app.config["SMARTPROXY_HOST"]}:{current_app.config["SMARTPROXY_PORT"]}"
-    
+    def resolve_smartproxy_url(self, proxy_geo, session_duration="5"):
+        return f"user-<smartproxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<smartproxy_password>@{current_app.config['SMARTPROXY_HOST']}:{current_app.config['SMARTPROXY_PORT']}"
+
     def get_identity(self, method: str, value: dict | str | int = None) -> dict:
         identity = {}
         if method == "id":
@@ -46,7 +46,7 @@ class IdentityService:
         identity.fetch_identity_by_id(identity_id)
         identity.update_cookies(cookies)
         return True
-    
+
     def get_timezone(self, ip_addr: str, identity_id: int = None) -> dict:
         with open("./flaskr/files/timezones_abbr_map.json") as f:
             timezone_fulls = json.load(f)
