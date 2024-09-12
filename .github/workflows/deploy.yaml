@@ -43,6 +43,27 @@ jobs:
           pip install --upgrade pip
           pip install -r /var/www/ish-bot-identities/requirements.txt
           pip install gunicorn
+
+          sudo /var/www/ish-bot-identities/.env <<EOF
+          MONGO_HOST=${{ secrets.MONGO_HOST }}
+          MONGO_PORT=${{ secrets.MONGO_PORT }}
+          MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}
+
+          PAGE_DEPTH_RANGE=0.14,0.17
+
+          AD_PROVIDER=monetag
+          AD_CLICK_PROBABILITY_RANGE=0.32,0.40
+          AD_KEYWORDS=win,gamble,casino,money,bet,\$,cash,virus,hack,stock,forex,crypto
+          AD_KEYWORDS_SMARTPHONE=
+          AD_KEYWORDS_CLICK_PROBABILITY_RANGE=0.74,0.87
+
+          VIGNETTE_AD_TYPE=0.8
+          IN_PAGE_AD_TYPE=0.2
+
+          SMARTPROXY_HOST=gate.smartproxy.com
+          SMARTPROXY_PORT=7000
+          EOF
           
           sudo systemctl start nginx
           sudo systemctl enable nginx
