@@ -18,13 +18,13 @@ jobs:
       with:
         python-version: '3.12' 
 
-    - name: Install dependencies
+    - name: Install dependencies locally (optional)
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install gunicorn
 
-    - name: Upload code to server
+    - name: Upload code to server (excluding .git folder)
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_DOMAIN }}
@@ -32,6 +32,9 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: "./"
         target: "~/ish-bot-identities-server"
+        rm: true
+        exclude: |
+          .git
 
     - name: Set up Gunicorn, Nginx, and SSL
       uses: appleboy/ssh-action@v0.1.6
@@ -40,14 +43,22 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          sudo mv ~/ish-bot-identities-server /var/www/
           sudo apt-get update
-          sudo apt-get install -y nginx
+          sudo apt-get install -y nginx python3-venv
+
+          # Move code to web directory
+          sudo mv ~/ish-bot-identities-server /var/www/
+
+          # Create virtual environment and install dependencies
+          python3 -m venv /var/www/ish-bot-identities-server/.venv
+          source /var/www/ish-bot-identities-server/.venv/bin/activate
+          pip install --upgrade pip
+          pip install -r /var/www/ish-bot-identities-server/requirements.txt
+          pip install gunicorn
 
           sudo systemctl start nginx
           sudo systemctl enable nginx
-
-
+          
           sudo tee /etc/systemd/system/gunicorn.service <<EOF
           [Unit]
           Description=Gunicorn instance to serve ish-bot-identities-server
@@ -57,8 +68,8 @@ jobs:
           User=${{ secrets.SERVER_USER }}
           Group=www-data
           WorkingDirectory=/var/www/ish-bot-identities-server
-          Environment="PATH=/var/www/ish-bot-identities-server/venv/bin"
-          ExecStart=/var/www/ish-bot-identities-server/venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities-server/ish_bot.sock wsgi:app
+          Environment="PATH=/var/www/ish-bot-identities-server/.venv/bin"
+          ExecStart=/var/www/ish-bot-identities-server/.venv/bin/gunicorn --workers 3 --bind unix:/var/www/ish-bot-identities-server/ish_bot.sock wsgi:app
 
           [Install]
           WantedBy=multi-user.target
@@ -87,6 +98,3 @@ jobs:
           sudo ln -sf /etc/nginx/sites-available/ish-bot-identities-server /etc/nginx/sites-enabled
           sudo nginx -t
           sudo systemctl restart nginx
-
-          sudo nginx -t
-          sudo systemctl reload nginx
