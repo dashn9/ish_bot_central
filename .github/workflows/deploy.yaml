@@ -44,7 +44,7 @@ jobs:
           pip install -r /var/www/ish-bot-identities/requirements.txt
           pip install gunicorn
 
-          sudo /var/www/ish-bot-identities/.env <<EOF
+          sudo tee /var/www/ish-bot-identities/.env <<EOF
           MONGO_HOST=${{ secrets.MONGO_HOST }}
           MONGO_PORT=${{ secrets.MONGO_PORT }}
           MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}
