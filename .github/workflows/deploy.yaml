@@ -45,10 +45,10 @@ jobs:
           pip install gunicorn
 
           sudo tee /var/www/ish-bot-identities/.env <<EOF
-          MONGO_HOST=${{ secrets.MONGO_HOST }}
-          MONGO_PORT=${{ secrets.MONGO_PORT }}
-          MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}
-          MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}
+          MONGO_HOST=${{ secrets.MONGODB_HOST }}
+          MONGO_PORT=${{ secrets.MONGODB_PORT }}
+          MONGO_USERNAME=${{ secrets.MONGODB_USERNAME }}
+          MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }}
 
           PAGE_DEPTH_RANGE=0.14,0.17
 
