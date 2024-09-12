@@ -46,16 +46,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nginx python3-venv
 
-          # Move code to web directory
-          sudo mv ~/ish-bot-identities-server /var/www/
-
           # Create virtual environment and install dependencies
-          python3 -m venv /var/www/ish-bot-identities-server/.venv
-          source /var/www/ish-bot-identities-server/.venv/bin/activate
+          python3 -m venv ~/ish-bot-identities-server/.venv
+          source ~/ish-bot-identities-server/.venv/bin/activate
           pip install --upgrade pip
-          pip install -r /var/www/ish-bot-identities-server/requirements.txt
+          pip install -r ~/ish-bot-identities-server/requirements.txt
           pip install gunicorn
 
+
+          sudo rm -r /var/www/ish-bot-identities-server
+          sudo mv ~/ish-bot-identities-server /var/www/
+          
           sudo systemctl start nginx
           sudo systemctl enable nginx
           
