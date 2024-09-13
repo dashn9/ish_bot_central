@@ -78,7 +78,7 @@ jobs:
           Group=www-data
           WorkingDirectory=/var/www/ish-bot-identities
           Environment="PATH=/var/www/ish-bot-identities/.venv/bin"
-          ExecStart=/var/www/ish-bot-identities/.venv/bin/gunicorn --workers 2 --bind unix:/var/www/ish-bot-identities/ish_bot.sock --log-level=info "flaskr:app"
+          ExecStart=/var/www/ish-bot-identities/.venv/bin/gunicorn --workers 2 --bind unix:/var/www/ish-bot-identities/ish_bot.sock --log-level=info "flaskr:create_app()"
 
           [Install]
           WantedBy=multi-user.target
