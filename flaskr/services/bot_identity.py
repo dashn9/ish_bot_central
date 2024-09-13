@@ -11,8 +11,11 @@ class IdentityService:
     def __init__(self, db_client: MongoClient) -> None:
         self.__db_client = db_client
 
+    def resolve_dataimpulse_url(self, proxy_geo):
+        return f"<proxy_user>__cr.{proxy_geo}:<proxy_password>@{current_app.config['DATAIMPULSE_HOST']}:{current_app.config['DATAIMPULSE_PORT']}"
+
     def resolve_smartproxy_url(self, proxy_geo, session_duration="5"):
-        return f"user-<smartproxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<smartproxy_password>@{current_app.config['SMARTPROXY_HOST']}:{current_app.config['SMARTPROXY_PORT']}"
+        return f"user-<proxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<proxy_password>@{current_app.config['SMARTPROXY_HOST']}:{current_app.config['SMARTPROXY_PORT']}"
 
     def get_identity(self, method: str, value: dict | str | int = None) -> dict:
         identity = {}
@@ -26,7 +29,11 @@ class IdentityService:
             identity["TIMEZONE"].pop("full_info")
         except KeyError:
             pass
-        identity["PROXY_URL"] = self.resolve_smartproxy_url(identity["PROXY_GEO"])
+
+        if "dataimpulse" in identity["PROXY_CLIENT"]:
+            identity["PROXY_URL"] = self.resolve_dataimpulse_url(identity["PROXY_GEO"])
+        else:
+            identity["PROXY_URL"] = self.resolve_smartproxy_url(identity["PROXY_GEO"])
 
         return identity
 
