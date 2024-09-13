@@ -40,29 +40,39 @@ jobs:
           pip install --upgrade pip
           pip install -r /var/www/ish-bot-identities/requirements.txt
           pip install gunicorn
-
+          
           sudo tee /var/www/ish-bot-identities/.env <<EOF
-          MONGO_HOST=${{ secrets.MONGODB_HOST }}
-          MONGO_PORT=${{ secrets.MONGODB_PORT }}
-          MONGO_USERNAME=${{ secrets.MONGODB_USERNAME }}
-          MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }}
+                  MONGO_HOST=${{ secrets.MONGODB_HOST }}
+                  MONGO_PORT=${{ secrets.MONGODB_PORT }}
+                  MONGO_USERNAME=${{ secrets.MONGODB_USERNAME }}
+                  MONGO_PASSWORD=${{ secrets.MONGODB_PASSWORD }}
 
-          PAGE_DEPTH_RANGE=0.14,0.17
+                  PAGE_DEPTH_RANGE=0.14,0.17
 
-          AD_PROVIDER=monetag
-          AD_CLICK_PROBABILITY_RANGE=0.32,0.40
-          AD_KEYWORDS=win,gamble,casino,money,bet,\$,cash,virus,hack,stock,forex,crypto
-          AD_KEYWORDS_SMARTPHONE=
-          AD_KEYWORDS_CLICK_PROBABILITY_RANGE=0.74,0.87
+                  AD_PROVIDER=monetag
+                  AD_CLICK_PROBABILITY_RANGE=0.32,0.40
+                  AD_KEYWORDS=win,gamble,casino,money,bet,\$,cash,virus,hack,stock,forex,crypto
+                  AD_KEYWORDS_SMARTPHONE=
+                  AD_KEYWORDS_CLICK_PROBABILITY_RANGE=0.74,0.87
 
-          VIGNETTE_AD_TYPE=0.8
-          IN_PAGE_AD_TYPE=0.2
+                  VIGNETTE_AD_TYPE=0.8
+                  IN_PAGE_AD_TYPE=0.2
 
-          SMARTPROXY_HOST=gate.smartproxy.com
-          SMARTPROXY_PORT=7000
+                  SMARTPROXY_HOST=gate.smartproxy.com
+                  SMARTPROXY_PORT=7000
 
-          DATAIMPULSE_HOST=gw.dataimpulse.com
-          DATAIMPULSE_PORT=10000
+                  DATAIMPULSE_HOST=gw.dataimpulse.com
+                  DATAIMPULSE_PORT=10000
+
+                  PAGE_CONTENT_ELEMENT="#ouuzc"
+                  RELATED_ARTICLES_ELEMENTS=.nav-links
+                  PAGE_CLICKS_MIN=3
+                  PAGE_CLICKS_MAX=5
+                  VIGNETTE_CLOSE_AD_ELEMENTS="//iframe//span[text() = 'Close']"
+                  VIGNETTE_OPEN_AD_ELEMENTS="//iframe//span[count(ancestor::div) = 5]"
+                  IN_PAGE_OPEN_AD_LINK_ELEMENTS='//iframe//div[@style="display: flex !important;"]'
+                  MAXIMUM_NO_OF_ADS=2
+                  PROXY_DOMAIN_WHITELISTS=
           EOF
           
           sudo systemctl start nginx
