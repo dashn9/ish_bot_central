@@ -64,8 +64,8 @@ jobs:
                   DATAIMPULSE_HOST=gw.dataimpulse.com
                   DATAIMPULSE_PORT=10000
 
-                  PAGE_CONTENT_ELEMENT="#ouuzc"
-                  RELATED_ARTICLES_ELEMENTS=.nav-links
+                  PAGE_CONTENT_ELEMENT="body"
+                  RELATED_ARTICLES_ELEMENTS=aside
                   PAGE_CLICKS_MIN=3
                   PAGE_CLICKS_MAX=5
                   VIGNETTE_CLOSE_AD_ELEMENTS="//iframe//span[text() = 'Close']"
