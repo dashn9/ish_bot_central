@@ -141,4 +141,4 @@ class UrlService:
         link_to_use, site_data = self.get_weighted_url()
         link_data_to_use = self.get_url_data_to_use(site_data)
         link_data_to_use["page_url"] = link_to_use
-        return link_to_use
+        return link_data_to_use
