@@ -117,10 +117,10 @@ class UrlService:
         """
         random_pick = random.random()
         current = 0
-        for item, weight, *_ in weighted_items:
-            current += weight
+        for weighted_item in weighted_items:
+            current += weighted_item[1]
             if current >= random_pick:
-                return item
+                return weighted_item
         return None
 
     def get_weighted_url(self):
@@ -135,7 +135,7 @@ class UrlService:
             return "No site available"
 
         urls_for_site = [(url, weight) for url, weight in url_weights[site]]
-        return self.pick_weighted_item(urls_for_site), site[2]
+        return self.pick_weighted_item(urls_for_site)[0], site[2]
 
     def fetch_random_url(self):
         link_to_use, site_data = self.get_weighted_url()
