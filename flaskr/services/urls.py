@@ -117,7 +117,7 @@ class UrlService:
         """
         random_pick = random.random()
         current = 0
-        for item, weight in weighted_items:
+        for item, weight, *_ in weighted_items:
             current += weight
             if current >= random_pick:
                 return item
