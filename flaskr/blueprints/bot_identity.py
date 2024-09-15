@@ -42,7 +42,9 @@ def get_identity(method, value):
 def fetch_timezone(identity_id: int):
 
     identity_service = IdentityService(db_client=get_db())
-    timezone = identity_service.get_timezone(request.remote_addr, identity_id)
+    timezone = identity_service.get_timezone(
+        request.environ.get("HTTP_X_REAL_IP", request.remote_addr), identity_id
+    )
     return jsonify(timezone)
 
 
