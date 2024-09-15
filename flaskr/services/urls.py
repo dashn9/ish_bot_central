@@ -134,7 +134,7 @@ class UrlService:
         if not site:
             return "No site available"
 
-        urls_for_site = [(url, weight) for url, weight in url_weights[site]]
+        urls_for_site = [(url, weight) for url, weight in url_weights[site[0]]]
         return self.pick_weighted_item(urls_for_site)[0], site[2]
 
     def fetch_random_url(self):
