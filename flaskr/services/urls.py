@@ -85,7 +85,7 @@ class UrlService:
 
                 weighted_urls[site] = [(url, weight) for url, weight in site_urls]
 
-        total_weight = sum(weight for _, weight in site_weights)
+        total_weight = sum(weight for _, weight, _ in site_weights)
         site_weights = [
             (site, (weight / total_weight), site_data)
             for site, weight, site_data in site_weights
