@@ -50,7 +50,7 @@ class UrlService:
                 "maximum_no_of_ads", current_app.config["MAXIMUM_NO_OF_ADS"]
             ),
             "proxy_domain_whitelists": site_data.get(
-                "proxy_domain_whitelists", current_app.config["PROXY_DOMAIN_WHITELISTS"]
+                "PROXY_DOMAIN_WHITELISTS", current_app.config["PROXY_DOMAIN_WHITELISTS"]
             ),
         }
 
