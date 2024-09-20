@@ -63,16 +63,6 @@ jobs:
 
                   DATAIMPULSE_HOST=gw.dataimpulse.com
                   DATAIMPULSE_PORT=10000
-
-                  PAGE_CONTENT_ELEMENT="body"
-                  RELATED_ARTICLES_ELEMENTS=aside
-                  PAGE_CLICKS_MIN=3
-                  PAGE_CLICKS_MAX=5
-                  VIGNETTE_CLOSE_AD_ELEMENTS="//iframe//span[text() = 'Close']"
-                  VIGNETTE_OPEN_AD_ELEMENTS="//iframe//span[count(ancestor::div) = 5]"
-                  IN_PAGE_OPEN_AD_LINK_ELEMENTS='//iframe//div[@style="display: flex !important;"]'
-                  MAXIMUM_NO_OF_ADS=2
-                  PROXY_DOMAIN_WHITELISTS=
           EOF
           
           sudo systemctl start nginx

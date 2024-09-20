@@ -19,38 +19,27 @@ class UrlService:
 
         return {
             "page_url": "",
-            "page_content_element": links_data.get(
-                "page_content_element", current_app.config["PAGE_CONTENT_ELEMENT"]
-            ),
+            "page_content_element": links_data.get("page_content_element", None),
             "related_articles_elements": links_data.get(
-                "related_articles_elements",
-                current_app.config["RELATED_ARTICLES_ELEMENTS"],
+                "related_articles_elements", None
             ),
             "page_clicks": random.randint(
-                links_data.get(
-                    "page_clicks_min", current_app.config["PAGE_CLICKS_MIN"]
-                ),
-                links_data.get(
-                    "page_clicks_max", current_app.config["PAGE_CLICKS_MAX"]
-                ),
+                links_data.get("page_clicks_min", 0),
+                links_data.get("page_clicks_max", 0),
             ),
             "vignette_close_ad_elements": links_data.get(
-                "vignette_close_ad_elements",
-                current_app.config["VIGNETTE_CLOSE_AD_ELEMENTS"],
+                "vignette_close_ad_elements", None
             ),
             "vignette_open_ad_elements": links_data.get(
-                "vignette_open_ad_elements",
-                current_app.config["VIGNETTE_OPEN_AD_ELEMENTS"],
+                "vignette_open_ad_elements", None
             ),
             "in_page_open_ad_link_elements": links_data.get(
-                "in_page_open_ad_link_elements",
-                current_app.config["IN_PAGE_OPEN_AD_LINK_ELEMENTS"],
+                "in_page_open_ad_link_elements", None
             ),
-            "maximum_no_of_ads": links_data.get(
-                "maximum_no_of_ads", current_app.config["MAXIMUM_NO_OF_ADS"]
-            ),
-            "proxy_domain_whitelists": site_data.get(
-                "PROXY_DOMAIN_WHITELISTS", current_app.config["PROXY_DOMAIN_WHITELISTS"]
+            "maximum_no_of_ads": links_data.get("maximum_no_of_ads", 2),
+            "proxy_domain_whitelists": site_data.get("PROXY_DOMAIN_WHITELISTS", "*"),
+            "proxy_domain_vip_whitelists": site_data.get(
+                "PROXY_DOMAIN_VIP_WHITELISTS", []
             ),
         }
 
