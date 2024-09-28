@@ -65,7 +65,11 @@ class IdentityService:
         }
         ipapi_response = requests.get(
             f"http://ip-api.com/json/{ip_addr}?fields=53137215"
-        ).json()
+        )
+        if ipapi_response.ok:
+            ipapi_response = ipapi_response.json()
+        else:
+            raise requests.RequestException("Error occurred trying to fetch timezone")
 
         worldtimeapi_response = requests.get(
             self.timezone_ip_timezone_api_url_resolver(ipapi_response["timezone"])
