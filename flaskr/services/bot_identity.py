@@ -1,4 +1,6 @@
 import json
+import random
+import string
 import requests
 from pymongo import MongoClient
 from flask import current_app
@@ -11,8 +13,14 @@ class IdentityService:
     def __init__(self, db_client: MongoClient) -> None:
         self.__db_client = db_client
 
+    def generate_random_string(length=12):
+        characters = string.ascii_letters + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
+    
     def resolve_dataimpulse_url(self, proxy_geo):
-        return f"<proxy_user>__cr.{proxy_geo}:<proxy_password>@{current_app.config['DATAIMPULSE_HOST']}:{current_app.config['DATAIMPULSE_PORT']}"
+        # the second proxy is country target, i will still have to modify so it comes directly from identity
+        return (f"<proxy_user>__cr.{proxy_geo}:<proxy_password>@{current_app.config['DATAIMPULSE_HOST']}:{current_app.config['DATAIMPULSE_PORT']}",
+                f"<proxy_user>__cr.{proxy_geo.split(";city")[0]};sessid.{self.generate_random_string()};sessttl.5:<proxy_password>@{current_app.config['DATAIMPULSE_HOST']}:{current_app.config['DATAIMPULSE_PORT']}")
 
     def resolve_smartproxy_url(self, proxy_geo, session_duration="5"):
         return f"user-<proxy_user>-{proxy_geo}-{session_duration and '-session-duration-'+session_duration}:<proxy_password>@{current_app.config['SMARTPROXY_HOST']}:{current_app.config['SMARTPROXY_PORT']}"
@@ -31,7 +39,7 @@ class IdentityService:
             pass
 
         if "dataimpulse" in identity["PROXY_CLIENT"]:
-            identity["PROXY_URL"] = self.resolve_dataimpulse_url(identity["PROXY_GEO"])
+            identity["PROXY_URL"], identity["COUNTRY_PROXY_URL"] = self.resolve_dataimpulse_url(identity["PROXY_GEO"])
         else:
             identity["PROXY_URL"] = self.resolve_smartproxy_url(identity["PROXY_GEO"])
 
