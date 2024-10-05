@@ -13,7 +13,7 @@ class IdentityService:
     def __init__(self, db_client: MongoClient) -> None:
         self.__db_client = db_client
 
-    def generate_random_string(length=12):
+    def generate_random_string(self, length=12):
         characters = string.ascii_letters + string.digits
         return "".join(random.choice(characters) for _ in range(length))
 
