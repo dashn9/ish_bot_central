@@ -5,9 +5,10 @@ import requests
 from pymongo import MongoClient
 from flask import current_app
 from flaskr.models.identity import BotIdentityModel
+from ._filters import Filter
 
 
-class IdentityService:
+class IdentityService(Filter):
     __db_client = None
 
     def __init__(self, db_client: MongoClient) -> None:
@@ -32,8 +33,9 @@ class IdentityService:
         if method == "id":
             identity = BotIdentityModel(self.__db_client).fetch_identity_by_id(value)
         elif method == "random":
-            identity = BotIdentityModel(self.__db_client).fetch_random_identity()
-
+            identity = BotIdentityModel(self.__db_client).fetch_random_identity(value)
+        if not identity:
+            return None
         identity.pop("_id")
         try:
             identity["TIMEZONE"].pop("full_info")

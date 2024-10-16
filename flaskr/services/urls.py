@@ -41,6 +41,9 @@ class UrlService:
             "proxy_domain_vip_whitelists": site_data.get(
                 "PROXY_DOMAIN_VIP_WHITELISTS", []
             ),
+            "ads": {
+                "ctr_exponents": site_data.get("ADS", {}).get("ctr_exponents", {}),
+            },
         }
 
     def precompute__weights(self):

@@ -1,5 +1,7 @@
 import json
-from flask import Blueprint, jsonify, request
+from urllib.parse import parse_qsl
+
+from flask import Blueprint, jsonify, request, abort
 from flaskr.db import get_db
 
 from flaskr.services.bot_identity import IdentityService
@@ -27,13 +29,17 @@ def get_identity(method, value):
     ad_service = AdService()
 
     if method == "random":
-        identity = identity_service.get_identity(method)
+        filters = None
+        if value:
+            filters = identity_service.construct_filters(dict(parse_qsl(value)))
+        identity = identity_service.get_identity(method, filters)
     else:
         if value is None:
             return jsonify({"error": "Value is required for this method"}), 400
 
         identity = identity_service.get_identity(method, json.loads(value))
-
+    if not identity:
+        abort(404, "Identity Does Not Exist, Please Check Filters and Retry")
     ad_service.insert_monetag_ads_attribs_to_identity(identity)
     return jsonify(identity)
 
