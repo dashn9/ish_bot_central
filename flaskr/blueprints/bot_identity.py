@@ -54,6 +54,14 @@ def fetch_timezone(identity_id: int):
     return jsonify(timezone)
 
 
+@identity_bp.route("/<int:identity_id>/timezone/<str:ip>/", methods=["GET"])
+def fetch_timezone_with_ip(identity_id: int, ip_addr: str):
+
+    identity_service = IdentityService(db_client=get_db())
+    timezone = identity_service.get_timezone(ip_addr, identity_id)
+    return jsonify(timezone)
+
+
 @identity_bp.route("/<int:identity_id>/cookies/", methods=["PUT"])
 def update_cookies(identity_id: int):
     cookies = request.json
