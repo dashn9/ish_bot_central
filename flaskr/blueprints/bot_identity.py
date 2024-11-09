@@ -54,7 +54,7 @@ def fetch_timezone(identity_id: int):
     return jsonify(timezone)
 
 
-@identity_bp.route("/<int:identity_id>/timezone/<str:ip>/", methods=["GET"])
+@identity_bp.route("/<int:identity_id>/timezone/<string:ip>/", methods=["GET"])
 def fetch_timezone_with_ip(identity_id: int, ip_addr: str):
 
     identity_service = IdentityService(db_client=get_db())
