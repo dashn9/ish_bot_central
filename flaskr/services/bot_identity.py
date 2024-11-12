@@ -82,15 +82,17 @@ class IdentityService(Filter):
         )
         if ipapi_response.ok:
             ipapi_response = ipapi_response.json()
-        else:
-            raise requests.RequestException("Error occurred trying to fetch timezone")
+        worldtimeapi_abbrv = None
+        try:
+            worldtimeapi_response = requests.get(
+                self.timezone_ip_timezone_api_url_resolver(ipapi_response["timezone"])
+            ).json()
+            worldtimeapi_abbrv = worldtimeapi_response.get("abbreviation", None)
+        except requests.RequestException:
+            pass
 
-        worldtimeapi_response = requests.get(
-            self.timezone_ip_timezone_api_url_resolver(ipapi_response["timezone"])
-        ).json()
-
-        fetched_timezone["full_name"] = timezone_fulls.get(
-            worldtimeapi_response["abbreviation"], None
+        fetched_timezone["full_name"] = worldtimeapi_abbrv or (
+            timezone_fulls.get(worldtimeapi_abbrv, None)
         )
 
         fetched_timezone["id"] = ipapi_response["timezone"]
