@@ -68,6 +68,12 @@ class IdentityService(Filter):
         identity.update_cookies(cookies)
         return True
 
+    def update_local_storage(self, identity_id, local_storage: list) -> bool:
+        identity = BotIdentityModel(self.__db_client)
+        identity.fetch_identity_by_id(identity_id)
+        identity.update_local_storage(local_storage)
+        return True
+
     def get_timezone(self, ip_addr: str, identity_id: int = None) -> dict:
         with open("./flaskr/files/timezones_abbr_map.json") as f:
             timezone_fulls = json.load(f)

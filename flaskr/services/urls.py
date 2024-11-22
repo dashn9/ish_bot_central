@@ -37,10 +37,7 @@ class UrlService:
                 "in_page_open_ad_link_elements", None
             ),
             "maximum_no_of_ads": links_data.get("maximum_no_of_ads", 2),
-            "proxy_domain_whitelists": site_data.get("PROXY_DOMAIN_WHITELISTS", "*"),
-            "proxy_domain_vip_whitelists": site_data.get(
-                "PROXY_DOMAIN_VIP_WHITELISTS", []
-            ),
+            "network_rules": site_data.get("NETWORK_RULES", "*"),
             "ads": {
                 "ctr_exponents": site_data.get("ADS", {}).get("ctr_exponents", {}),
             },

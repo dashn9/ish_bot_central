@@ -27,5 +27,8 @@ class BotIdentityModel(BotBaseModel, MongoBaseModel):
     def update_cookies(self, cookies: list):
         return self.update(COOKIES=cookies)
 
+    def update_local_storage(self, cookies: list):
+        return self.update(COOKIES=cookies)
+
     def get_collection(self) -> str:
         return "identities"

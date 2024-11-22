@@ -68,3 +68,10 @@ def update_cookies(identity_id: int):
     identity_service = IdentityService(db_client=get_db())
     cookies = identity_service.update_cookies(identity_id, cookies)
     return jsonify(cookies)
+
+@identity_bp.route("/<int:identity_id>/local-storage/", methods=["PUT"])
+def update_cookies(identity_id: int):
+    local_storage = request.json
+    identity_service = IdentityService(db_client=get_db())
+    local_storage = identity_service.update_local_storage(identity_id, local_storage)
+    return jsonify(local_storage)
